@@ -1,0 +1,11 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "resolution_week1_buffalo09"
+version = "0.0.1"
+dependencies = []
+
+[project.scripts]
+todo = "resolution_week1_buffalo09.main:main"
