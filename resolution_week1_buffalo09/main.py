@@ -27,6 +27,8 @@ def main():
     parser.add_argument("-c", "--complete", type = int, help = "Mark a task complete using its ID")
     parser.add_argument("-d", "--delete", type = int, help = "delete a task")
     parser.add_argument("--due", type = str, help = "Add task Due Date YYYY-MM-DD")
+    parser.add_argument("-e", "--edit", type = int, help = "Edit task with ID")
+    parser.add_argument("-da", "--deleteall", help = "Delete all tasks", action = "store_true")
     args = parser.parse_args()
 
 
@@ -49,21 +51,31 @@ def main():
         sys.exit(0)
     elif args.task:
         tasks = load_tasks()
-        print(tasks)
-        if len(tasks) == 0:
-            id = 1
-        else:
-            id = tasks[-1]["id"] + 1
-#add to json
-        tasks.append({
-            "id": id, 
-            "task": args.task, 
-            "done": False, 
-            "due": args.due})
-            
-        save_task(tasks)
+        if not args.edit:
+            print(tasks)
+            if len(tasks) == 0:
+                id = 1
+            else:
+                id = tasks[-1]["id"] + 1
+        #add to json
+            tasks.append({
+                "id": id, 
+                "task": args.task, 
+                "done": False, 
+                "due": args.due})
+                
+            save_task(tasks)
 
-        print(f"Task {args.task} added with ID of {id}")
+            print(f"Task {args.task} added with ID of {id}")
+        else:
+            tasks = load_tasks()
+        for task in tasks:
+            if task['id'] == args.edit:
+                task['task'] = args.task
+                save_task(tasks)
+                print(f"Changed task to {args.task}")
+                break
+
     elif args.complete:
         tasks = load_tasks()
         for task in tasks:
@@ -80,6 +92,14 @@ def main():
                 save_task(tasks)
                 print(f"Task {args.delete} removed")
                 break
+    
+    #delete all tasks
+    elif args.deleteall:
+        tasks = load_tasks()
+        tasks.clear()
+        save_task(tasks)
+        print(f"All tasks removed")
+
 
 if __name__ == "__main__":
     main()
