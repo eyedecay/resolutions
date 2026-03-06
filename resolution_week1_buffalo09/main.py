@@ -26,6 +26,7 @@ def main():
     parser.add_argument("-l", "--list", help="List all tasks", action ="store_true")
     parser.add_argument("-c", "--complete", type = int, help = "Mark a task complete using its ID")
     parser.add_argument("-d", "--delete", type = int, help = "delete a task")
+    parser.add_argument("--due", type = str, help = "Add task Due Date YYYY-MM-DD")
     args = parser.parse_args()
 
 
@@ -36,9 +37,15 @@ def main():
 
     if args.list:
         tasks = load_tasks()
+        if len(tasks) == 0:
+            print(f"No tasks found")
         for task in tasks:
             status = "x" if task["done"] else " "
-            print(f"[{status}] {task['id']}: {task['task']}")
+            due = task.get('due')
+            if due:
+                print(f"[{status}] {task['id']}: {task['task']} Due: {task['due']}")
+            else:
+                print(f"[{status}] {task['id']}: {task['task']}")
         sys.exit(0)
     elif args.task:
         tasks = load_tasks()
@@ -47,7 +54,13 @@ def main():
             id = 1
         else:
             id = tasks[-1]["id"] + 1
-        tasks.append({"id": id, "task": args.task, "done": False})
+#add to json
+        tasks.append({
+            "id": id, 
+            "task": args.task, 
+            "done": False, 
+            "due": args.due})
+            
         save_task(tasks)
 
         print(f"Task {args.task} added with ID of {id}")
