@@ -1,2 +1,4 @@
 .venv
 tasks.json
+contacts.json
+.DS_Store
